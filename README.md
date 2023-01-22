@@ -1,6 +1,17 @@
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+It's just a little side-project to learn react and Tailwind. The simple usecase here is to backup liks from [diigo](https://github.com/cconrad/diigo-backup), copy the json file in the src directory, and then:
+
+```
+npm i
+npm run start
+```
+
+The app should show a tag-cloud on the left and the links in the main area.
+
+What follows is the original contant which react created:
+
 
 ## Available Scripts
 
