@@ -1,8 +1,29 @@
 import './App.css';
 import { useState, useEffect } from 'react';
-import myData from './data.json';
+import { useQuery, gql } from '@apollo/client';
+const GET_BOOKMARKS = gql`
+  query Bookmarks {
+    bookmarks {
+      readlater
+      annotations
+      tags
+      comments
+      user
+      shared
+      url
+      createdAt
+      desc
+      updatedAt
+      title
+    }
+  }
+`;
 
 function extractTags(data) {
+  if (!data) {
+    return []
+  }
+  console.log(data)
   let tags = [];
   if (Array.isArray(data)) {
     data.forEach(item => {
@@ -87,6 +108,7 @@ const TagCloud = (props) => {
 
 const LinkCard = (props) => {
 
+
   const tag_array = props.tags.split(",")
   return (
     <Card title={props.title} className="py-7">
@@ -118,12 +140,16 @@ const LinkCard = (props) => {
 const App = () => {
 
   const [counter, setCounter] = useState(0)
-  const data = myData
-  const tags = extractTags(data)
+
 
   useEffect(() => {
     setCounter(199)
   }, [])
+  const { loading, error, data } = useQuery(GET_BOOKMARKS);
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error : {error.message}</p>;
+
+  const tags = extractTags(data.bookmarks)
 
   return (
     <div className="App bg-blue-700">
@@ -142,18 +168,18 @@ const App = () => {
 
         <div className='col-span-5'>
 
-          {data.map(item => (
+          {data.bookmarks.map(({readlater, annotations, tags, comments, shared, url, created_at, desc, updated_at, title}) => (
             <LinkCard
-              readlater={item.readlater}
-              annotations={item.annotations}
-              tags={item.tags}
-              comments = {item.comments}
-              shared= {item.shared}
-              url = {item.url}
-              created_at= {item.created_at}
-              desc = {item.desc}
-              updated_at= {item.updated_at}
-              title= {item.title}/>
+              readlater={readlater}
+              annotations={annotations}
+              tags={tags}
+              comments = {comments}
+              shared= {shared}
+              url = {url}
+              created_at= {created_at}
+              desc = {desc}
+              updated_at= {updated_at}
+              title= {title}/>
 
 
           ))}

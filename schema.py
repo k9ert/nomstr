@@ -30,7 +30,7 @@ def get_bookmarks():
             url=item["url"],
             desc=item["desc"],
             readlater=item["readlater"],
-            annotations=item["annotations"],
+            annotations=[], #fixme
             tags=item["tags"],
             comments=item["comments"],
             user=item["user"],
