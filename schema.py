@@ -1,10 +1,10 @@
 import typing
-import schema
+import strawberry
 from typing import List
 import json
 
 
-@schema.type
+@strawberry.type
 class Bookmark:
     url: str
     desc: str
@@ -42,8 +42,8 @@ def get_bookmarks():
         listOfBookmarks.append(b)
     return listOfBookmarks
 
-@schema.type
+@strawberry.type
 class Query:
-    bookmarks: typing.List[Bookmark] = schema.field(resolver=get_bookmarks)
+    bookmarks: typing.List[Bookmark] = strawberry.field(resolver=get_bookmarks)
 
-schema = schema.Schema(query=Query)
+schema = strawberry.Schema(query=Query)

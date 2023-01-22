@@ -14,6 +14,17 @@ virtualenv --python=python3 .env
 . ./.env/bin/activate
 pip3 install -r requirements.txt 
 strawberry server schema
+# follow ths server
+```
+
+```
+{
+  bookmarks {
+    title
+		desc    
+    
+  }
+}
 ```
 
 The app should show a tag-cloud on the left and the links in the main area.
