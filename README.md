@@ -8,6 +8,14 @@ npm i
 npm run start
 ```
 
+also, you might want to start the strawberry server (which is not yet integrated)
+```
+virtualenv --python=python3 .env
+. ./.env/bin/activate
+pip3 install -r requirements.txt 
+strawberry server schema
+```
+
 The app should show a tag-cloud on the left and the links in the main area.
 
 What follows is the original contant which react created:
