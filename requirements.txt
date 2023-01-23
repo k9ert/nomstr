@@ -1,1 +1,2 @@
 strawberry-graphql[debug-server]
+flask

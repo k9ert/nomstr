@@ -13,8 +13,15 @@ also, you might want to start the strawberry server (which is not yet integrated
 virtualenv --python=python3 .env
 . ./.env/bin/activate
 pip3 install -r requirements.txt 
-strawberry server schema
-# follow ths server
+
+flask run
+# alternatively run strawberry direct:
+# strawberry server schema
+# follow ths server:
+http://0.0.0.0:5000/graphql
+
+# for strawberry direct:
+#http://0.0.0.0:8000/graphql
 ```
 
 ```
