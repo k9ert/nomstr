@@ -68,7 +68,9 @@ function extractTags(data) {
   
     return (
       <div className='rounded-lg bg-gray-500 py-0 px-3 m-1'>
-        <span className='text-sm'>{props.tag}</span>
+        <Link to={"/tag/"+props.tag}>
+            <span className='text-sm'>{props.tag}</span>
+        </Link>
       </div>
     )
   }

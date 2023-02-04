@@ -51,6 +51,9 @@ Adding React Routing (but without Layout)
 ## v0.0.4
 Added Layout with nesting
 
+## v0.1.0
+* Moving to something like semver
+* Having tag links (still as not all tags are shown on tag page)
 
 
 
@@ -60,7 +63,7 @@ Added Layout with nesting
 
 
 
-What follows is the original contant which react created:
+What follows is the original content which react created:
 
 
 ## Available Scripts
