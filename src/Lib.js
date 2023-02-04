@@ -56,9 +56,8 @@ function extractTags(data) {
         <div className='flex items-center flex-shrink-0 text-white mr-6'>
           <span className='font-bold text-xl'>nomstr</span>
         </div>
-        <TopNavBarItem title="Business" href="/solutions"/>
-        <TopNavBarItem title="Problems"/>
-        <TopNavBarItem title="Solutions"/>
+        <TopNavBarItem title="Home" href="/"/>
+        <TopNavBarItem title="About" href="/about"/>
     </nav>
     )
   }

@@ -1,46 +1,29 @@
 import './App.css';
-import { useQuery, gql } from '@apollo/client';
-import { TopNavBar, TagCloud, extractTags, LinkList, Alert } from "./Lib.js"
-const GET_BOOKMARKS = gql`
-  query Bookmarks {
-    bookmarks {
-      readlater
-      annotations
-      tags
-      comments
-      user
-      shared
-      url
-      createdAt
-      desc
-      updatedAt
-      title
-    }
-  }
-`;
+
+
+import {Home} from './pages/Home.js'
+import {About} from './pages/About.js'
+import React from 'react';
+import {
+  BrowserRouter,
+  Routes,
+  Route
+} from 'react-router-dom';
 
 
 
-const App = () => {
-  const { loading, error, data } = useQuery(GET_BOOKMARKS);
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error : {error.message}</p>;
 
-  const tags = extractTags(data.bookmarks)
-
+function App() {
   return (
-    <div className="App bg-blue-700">
-      <TopNavBar/>
-      <Alert text="alert Text!!"/>
-      
-      <div className='grid grid-cols-6'>
-        <nav class="col-span-1 flex flex-col items-center h-screen w-64 bg-gray-300 pt-5 px-2 ">
-          <TagCloud tags={tags}/>
-        </nav>
-          <LinkList bookmarks={data.bookmarks}></LinkList>
-      </div>
-    </div>
+    <BrowserRouter>
+      <Routes>
+        <Route exact path="/" element={<Home/>}/>
+        <Route exact path="/about" element={<About/>}/>
+      </Routes>
+    </BrowserRouter>
   );
 }
+
+
 
 export default App;
