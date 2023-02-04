@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Tag } from './components/Tag.js'
+import { BookmarkCard } from "./components/BookmarkCard.js";
 
   
   const Card = (props) => {
@@ -54,54 +55,17 @@ import { Tag } from './components/Tag.js'
     )
   }
   
-  const LinkCard = (props) => {
-  
-    return (
-      <Card title={props.title} className="py-7">
-        <div className=''>
-          <div className=''>
-            {props.url}
-          </div>
-          <div className=''>
-            {props.desc}
-          </div>
-          <div className='flex justify-center'>
-            { 
-              props.tags.map((tag) => (
-              <Tag key={tag.name} tag={tag}/>
-            ))
-  
-            }
-          </div>
-          <div className='text-xs'>
-            {props.created_at}
-          </div>
-        </div>
-      </Card>
-    )
-  }
+
 
   const LinkList = (props) => {
     const bookmarks = props.bookmarks
     return (
         <div className='col-span-5'>
 
-          {bookmarks.map(({readlater, annotations, tags, comments, shared, url, created_at, desc, updated_at, title}) => (
-            <LinkCard
-              key={url}
-              readlater={readlater}
-              annotations={annotations}
-              tags={tags}
-              comments = {comments}
-              shared= {shared}
-              url = {url}
-              created_at= {created_at}
-              desc = {desc}
-              updated_at= {updated_at}
-              title= {title}/>
-
-
-          ))}
+          {bookmarks.map((bookmark) => (
+            <BookmarkCard key={bookmark.url} bookmark={bookmark}/>
+          ))
+          }
         </div>
 
     )
@@ -122,4 +86,4 @@ import { Tag } from './components/Tag.js'
     }
   }
   
-  export { Card, TopNavBar, TagCloud, LinkCard, LinkList, Alert};
+  export { Card, TopNavBar, TagCloud, LinkList, Alert};
