@@ -1,6 +1,6 @@
 import './App.css';
 
-
+import {Layout} from './pages/Layout.js'
 import {Home} from './pages/Home.js'
 import {About} from './pages/About.js'
 import React from 'react';
@@ -17,8 +17,10 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route exact path="/" element={<Home/>}/>
-        <Route exact path="/about" element={<About/>}/>
+        <Route path="/" element={<Layout/>}>
+          <Route index element={<Home/>}/>
+          <Route path="/about" element={<About/>}/>
+        </Route>
       </Routes>
     </BrowserRouter>
   );

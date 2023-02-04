@@ -27,16 +27,11 @@ const Home = () => {
     const tags = extractTags(data.bookmarks)
 
     return (
-        <div className="App bg-blue-700">
-        <TopNavBar/>
-        <Alert text="alert Text!!"/>
-        
         <div className='grid grid-cols-6'>
             <nav class="col-span-1 flex flex-col items-center h-screen w-64 bg-gray-300 pt-5 px-2 ">
             <TagCloud tags={tags}/>
             </nav>
             <LinkList bookmarks={data.bookmarks}></LinkList>
-        </div>
         </div>
     );
 }

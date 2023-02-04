@@ -36,6 +36,30 @@ http://0.0.0.0:5000/graphql
 
 The app should show a tag-cloud on the left and the links in the main area.
 
+# Versions history
+I try to have a very clean git commit history and lots of tags.
+
+## v0.0.1
+initial version, all in App.js
+
+## v0.0.2
+Refactored most stuff to Lib.js
+
+## v0.0.3
+Adding React Routing (but without Layout)
+
+## v0.0.4
+Added Layout with nesting
+
+
+
+
+
+
+
+
+
+
 What follows is the original contant which react created:
 
 
