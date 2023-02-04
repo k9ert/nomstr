@@ -1,4 +1,4 @@
-import { Outlet, Link } from "react-router-dom";
+import { Outlet } from "react-router-dom";
 import { TopNavBar, Alert } from "../Lib.js"
 
 const Layout = () => {

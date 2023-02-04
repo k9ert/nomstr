@@ -1,5 +1,5 @@
 import { useQuery, gql } from '@apollo/client';
-import { TopNavBar, TagCloud, extractTags, LinkList, Alert } from "../Lib.js"
+import { TagCloud, extractTags, LinkList } from "../Lib.js"
 
 const GET_BOOKMARKS = gql`
   query Bookmarks {

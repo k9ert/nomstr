@@ -1,4 +1,4 @@
-import { TopNavBar, Alert, Card } from "../Lib.js"
+import {Card } from "../Lib.js"
 
 const About = () => {
 

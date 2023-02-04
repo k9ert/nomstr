@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 function extractTags(data) {
     if (!data) {
       return []
@@ -41,9 +43,9 @@ function extractTags(data) {
     return (
       <div className='w-full block flex-grow sm:flex sm:items-center sm:w-auto' >
         <div className='text-sm sm:flex-grow'>
-          <a href={props.href} className='block mt-4 sm:inline-block sm:mt-0 text-teal-200 hover:text-white'>
+          <Link to={props.href} className='block mt-4 sm:inline-block sm:mt-0 text-teal-200 hover:text-white'>
             {props.title}
-          </a>
+          </Link>
         </div>
       </div>
     )
