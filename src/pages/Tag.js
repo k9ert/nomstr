@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { useQuery, gql } from '@apollo/client';
-import { TagCloud, Tag, extractTags, LinkList, Card } from "../Lib.js"
+import { TagCloud, LinkList, Card } from "../Lib.js"
+import { Tag } from "../components/Tag"
 
 const TagPage = (props) => {
     const { tag } = useParams();

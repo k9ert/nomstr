@@ -1,29 +1,6 @@
 import { Link } from "react-router-dom";
+import { Tag } from './components/Tag.js'
 
-function extractTags(data) {
-    if (!data) {
-      return []
-    }
-    console.log(data)
-    let tags = [];
-    if (Array.isArray(data)) {
-      data.forEach(item => {
-        if (typeof item.tags === "string") {
-          tags = [...tags, ...item.tags.split(",")];
-        } else if (Array.isArray(item.tags)) {
-          tags = [...tags, ...item.tags];
-        }
-      });
-    } else {
-      if (typeof data.tags === "string") {
-        tags = [...tags, ...data.tags.split(",")];
-      } else if (Array.isArray(data.tags)) {
-        tags = [...tags, ...data.tags];
-      }
-    }
-    return [...new Set(tags)];
-  }
-  
   
   const Card = (props) => {
     return (
@@ -61,17 +38,6 @@ function extractTags(data) {
         <TopNavBarItem title="Home" href="/"/>
         <TopNavBarItem title="About" href="/about"/>
     </nav>
-    )
-  }
-  
-  const Tag = (props) => {
-    const tagString = typeof props.tag === 'string' ? props.tag : props.tag.name;
-    return (
-      <div className='rounded-lg bg-gray-500 py-0 px-3 m-1'>
-        <Link to={"/tag/"+tagString}>
-            <span className='text-sm'>{tagString}</span>
-        </Link>
-      </div>
     )
   }
   
@@ -158,4 +124,4 @@ function extractTags(data) {
     }
   }
   
-  export { Card, TopNavBar, Tag, TagCloud, LinkCard, LinkList, extractTags, Alert};
+  export { Card, TopNavBar, TagCloud, LinkCard, LinkList, Alert};

@@ -1,5 +1,5 @@
 import { useQuery, gql } from '@apollo/client';
-import { TagCloud, extractTags, LinkList } from "../Lib.js"
+import { TagCloud, LinkList } from "../Lib.js"
 
 const GET_BOOKMARKS = gql`
   query Bookmarks {
@@ -16,6 +16,9 @@ const GET_BOOKMARKS = gql`
       updatedAt
       title
     }
+    tags {
+        name
+    }
   }
 `;
 
@@ -24,7 +27,7 @@ const Home = () => {
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error : {error.message}</p>;
 
-    const tags = extractTags(data.bookmarks)
+    const tags = data.tags
 
     return (
         <div className='grid grid-cols-6'>
