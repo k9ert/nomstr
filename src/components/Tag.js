@@ -4,9 +4,9 @@ import React, { useState } from 'react';
 
 
 const Tag = (props) => {
-console.log(props.tag)
   const [editing, setEditing] = useState(false);
-  const [tagString, setTagString] = useState(props.tag.name);
+  const [tag, setTag] = useState({ ...props.tag });
+  const [newTag, setNewTag] = useState({ ...props.tag });
 
   const handleEdit = () => {
     setEditing(true);
@@ -14,42 +14,45 @@ console.log(props.tag)
 
   const handleSave = () => {
     setEditing(false);
-    // Save the updated tag here
+    props.onTagChange(tag.name, newTag.name); // Call the callback function passed from the parent component
+    setTag({ name: newTag.name});
   };
 
   return (
-    <div key={tagString} className="rounded-lg bg-gray-500 py-0 px-3 m-1 flex items-center">
+    <div key={tag.name} className="rounded-lg bg-gray-500 py-0 px-3 m-1 flex items-center">
         {editing ? (
         <input
             className="py-2 px-3 rounded-lg text-sm bg-gray-100 outline-none focus:shadow-outline w-full"
             type="text"
-            value={tagString}
-            onChange={(e) => setTagString(e.target.value)}
+            value={newTag.name}
+            onChange={(e) => setNewTag({ ...tag, name: e.target.value })}
         />
         ) : (
-        <Link to={"/tag/" + tagString} className="text-sm">
-            <span className="text-white">{tagString}</span>
+        <Link to={"/tag/" + tag.name} className="text-sm">
+            <span className="text-white">{tag.name}</span>
         </Link>
         )}
-        {editing ? (
-        <button
-            className="text-white text-sm bg-green-500 p-1 rounded-sm mr-2"
-            onClick={handleSave}
-        >
-            Save
-        </button>
-        ) : (
-        <button
-            className="text-sm  text-white bg-blue-500 ml-1 p-1 rounded-sm mr-0"
-            onClick={handleEdit}
-        >
-            Edit
-        </button>
+        {props.enableEdit && (
+          <>
+            {editing ? (
+              <button
+                  className="text-white text-sm bg-green-500 p-1 rounded-sm mr-2"
+                  onClick={handleSave}
+              >
+                  Save
+              </button>
+            ) : (
+              <button
+                  className="text-sm  text-white bg-blue-500 ml-1 p-1 rounded-sm mr-0"
+                  onClick={handleEdit}
+              >
+                  Edit
+              </button>
+            )}
+          </>
         )}
     </div>
   );
 };
-
-export default Tag;
 
 export { Tag }

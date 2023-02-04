@@ -65,4 +65,25 @@ class Query:
     tags: typing.List[Tag] = strawberry.field(resolver=get_tags)
     bookmarks: typing.List[Bookmark] = strawberry.field(resolver=get_bookmarks)
 
-schema = strawberry.Schema(query=Query)
+@strawberry.type
+class Mutation:
+    @strawberry.mutation
+    def update_bookmark(self, url: str, tags: List[str]) -> bool:
+        with open("data.json") as json_file:
+            data = json.load(json_file)
+        changed = False
+        for bookmark in data:
+            if bookmark["url"] == url:
+                bookmark["tags"] = ",".join(tags)
+                changed = True
+        if changed:
+            with open("data.json", "w") as json_file:
+                json.dump(data, json_file)
+            print(f"Tags ({tags})written !")
+        else:
+            print(f"Could not find url: {url}")
+        return changed
+
+
+
+schema = strawberry.Schema(query=Query, mutation=Mutation)

@@ -59,6 +59,9 @@ Added Layout with nesting
 * Render all tags on the left side for the tag page
 * Some bugfixes
 
+## v0.2.0
+* enable editing of tags (for bookmarks only)
+
 
 
 
