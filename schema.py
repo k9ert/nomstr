@@ -3,6 +3,10 @@ import strawberry
 from typing import List
 import json
 
+@strawberry.type
+class Tag:
+    name: str
+
 
 @strawberry.type
 class Bookmark:
@@ -10,7 +14,7 @@ class Bookmark:
     desc: str
     readlater: str
     annotations: List[str]
-    tags: str
+    tags: List[Tag]
     comments: List[str]
     user: str
     shared: str
@@ -18,9 +22,6 @@ class Bookmark:
     updated_at: str
     title: str
 
-@strawberry.type
-class Tag:
-    name: str
 
 
 
@@ -36,7 +37,7 @@ def get_bookmarks(tag: str =None):
                 desc=item["desc"],
                 readlater=item["readlater"],
                 annotations=[], #fixme
-                tags=item["tags"],
+                tags=[Tag(name=tag) for tag in item["tags"].split(",")],
                 comments=item["comments"],
                 user=item["user"],
                 shared=item["shared"],

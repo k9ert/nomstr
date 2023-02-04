@@ -4,10 +4,9 @@ import React, { useState } from 'react';
 
 
 const Tag = (props) => {
+console.log(props.tag)
   const [editing, setEditing] = useState(false);
-  const [tagString, setTagString] = useState(
-    typeof props.tag === 'string' ? props.tag : props.tag.name
-  );
+  const [tagString, setTagString] = useState(props.tag.name);
 
   const handleEdit = () => {
     setEditing(true);
@@ -19,7 +18,7 @@ const Tag = (props) => {
   };
 
   return (
-    <div className="rounded-lg bg-gray-500 py-0 px-3 m-1 flex items-center">
+    <div key={tagString} className="rounded-lg bg-gray-500 py-0 px-3 m-1 flex items-center">
         {editing ? (
         <input
             className="py-2 px-3 rounded-lg text-sm bg-gray-100 outline-none focus:shadow-outline w-full"

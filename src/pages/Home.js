@@ -6,7 +6,9 @@ const GET_BOOKMARKS = gql`
     bookmarks {
       readlater
       annotations
-      tags
+      tags {
+        name
+      }
       comments
       user
       shared

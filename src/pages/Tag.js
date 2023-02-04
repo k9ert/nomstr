@@ -13,7 +13,9 @@ const TagPage = (props) => {
             bookmarks(tag: "${tag}") {
                 readlater
                 annotations
-                tags
+                tags {
+                    name
+                }
                 comments
                 user
                 shared

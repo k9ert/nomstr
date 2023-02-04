@@ -56,7 +56,6 @@ import { Tag } from './components/Tag.js'
   
   const LinkCard = (props) => {
   
-    const tag_array = props.tags.split(",")
     return (
       <Card title={props.title} className="py-7">
         <div className=''>
@@ -67,10 +66,9 @@ import { Tag } from './components/Tag.js'
             {props.desc}
           </div>
           <div className='flex justify-center'>
-            {console.log(tag_array)}
             { 
-              tag_array.map((tag) => (
-              <Tag key={tag} tag={tag}/>
+              props.tags.map((tag) => (
+              <Tag key={tag.name} tag={tag}/>
             ))
   
             }
