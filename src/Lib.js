@@ -28,8 +28,8 @@ function extractTags(data) {
   const Card = (props) => {
     return (
       <div className='p-6 max-w-5xl mx-auto bg-gray-300 rounded-xl shadow-md block items-center mt-2' >
-        <div class="text-xl font-medium text-black">{props.title}</div>
-          <p class="text-slate-500">{props.message}</p>
+        <div className="text-xl font-medium text-black">{props.title}</div>
+          <p className="text-slate-500">{props.message}</p>
           <div>
             {props.children}
           </div>
@@ -65,11 +65,11 @@ function extractTags(data) {
   }
   
   const Tag = (props) => {
-  
+    const tagString = typeof props.tag === 'string' ? props.tag : props.tag.name;
     return (
       <div className='rounded-lg bg-gray-500 py-0 px-3 m-1'>
-        <Link to={"/tag/"+props.tag}>
-            <span className='text-sm'>{props.tag}</span>
+        <Link to={"/tag/"+tagString}>
+            <span className='text-sm'>{tagString}</span>
         </Link>
       </div>
     )
@@ -81,7 +81,7 @@ function extractTags(data) {
       <div className='flex justify-center flex-wrap max-w-4xl'>
         { 
           props.tags.map((tag) => (
-            <Tag tag={tag}/>
+            <Tag key={tag.name} tag={tag}/>
           ))
         }
       </div>
@@ -89,7 +89,6 @@ function extractTags(data) {
   }
   
   const LinkCard = (props) => {
-  
   
     const tag_array = props.tags.split(",")
     return (
@@ -105,7 +104,7 @@ function extractTags(data) {
             {console.log(tag_array)}
             { 
               tag_array.map((tag) => (
-              <Tag tag={tag}/>
+              <Tag key={tag} tag={tag}/>
             ))
   
             }
@@ -125,6 +124,7 @@ function extractTags(data) {
 
           {bookmarks.map(({readlater, annotations, tags, comments, shared, url, created_at, desc, updated_at, title}) => (
             <LinkCard
+              key={url}
               readlater={readlater}
               annotations={annotations}
               tags={tags}

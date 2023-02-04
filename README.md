@@ -55,7 +55,9 @@ Added Layout with nesting
 * Moving to something like semver
 * Having tag links (still as not all tags are shown on tag page)
 
-
+## v0.1.1
+* Render all tags on the left side for the tag page
+* Some bugfixes
 
 
 
