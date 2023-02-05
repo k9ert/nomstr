@@ -1,2 +1,4 @@
 strawberry-graphql[debug-server]
 flask
+sqlalchemy
+flask_sqlalchemy

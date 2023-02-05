@@ -4,6 +4,7 @@
 /node_modules
 /.pnp
 .pnp.js
+*.bak
 
 # testing
 /coverage
@@ -28,3 +29,5 @@ src/data.json
 # python
 data.json
 __pycache__
+
+instance
