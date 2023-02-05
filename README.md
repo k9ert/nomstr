@@ -62,6 +62,9 @@ Added Layout with nesting
 ## v0.2.0
 * enable editing of tags (for bookmarks only)
 
+## v0.3.0
+* Adding and deleting tags
+
 
 
 

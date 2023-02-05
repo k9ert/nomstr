@@ -1,28 +1,6 @@
-import { useQuery, gql } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import { TagCloud, LinkList } from "../Lib.js"
-
-const GET_BOOKMARKS = gql`
-  query Bookmarks {
-    bookmarks {
-      readlater
-      annotations
-      tags {
-        name
-      }
-      comments
-      user
-      shared
-      url
-      createdAt
-      desc
-      updatedAt
-      title
-    }
-    tags {
-        name
-    }
-  }
-`;
+import { GET_BOOKMARKS } from '../queries.js';
 
 const Home = () => {
     const { loading, error, data } = useQuery(GET_BOOKMARKS);

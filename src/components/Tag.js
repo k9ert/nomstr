@@ -18,6 +18,10 @@ const Tag = (props) => {
     setTag({ name: newTag.name});
   };
 
+  const handleDelete = () => {
+    props.onTagDelete(tag.name);
+  };
+
   return (
     <div key={tag.name} className="rounded-lg bg-gray-500 py-0 px-3 m-1 flex items-center">
         {editing ? (
@@ -42,12 +46,21 @@ const Tag = (props) => {
                   Save
               </button>
             ) : (
+              <>
               <button
                   className="text-sm  text-white bg-blue-500 ml-1 p-1 rounded-sm mr-0"
                   onClick={handleEdit}
               >
                   Edit
               </button>
+
+              <button
+                  className="text-sm text-white bg-red-500 ml-1 p-1 rounded-sm mr-0"
+                  onClick={handleDelete}
+              >
+                <span className="text-gray-100">x</span>
+              </button>
+              </>
             )}
           </>
         )}

@@ -3,18 +3,24 @@ import { Tag } from './Tag'
 import { gql, useMutation } from '@apollo/client';
 import { useState } from 'react';
 import { Link } from "react-router-dom";
+import { GET_BOOKMARKS } from '../queries';
+import { UPDATE_BOOKMARK_MUTATION } from '../queries';
 
 
 
 const BookmarkCard = (props) => {
 
    
-    const UPDATE_BOOKMARK_MUTATION = gql`
-    mutation MyMutation($url: String!, $tags: [String!]!) {
-        updateBookmark(url: $url, tags: $tags)
-    }
-    `;
-    const [updateBookmark, { data, loading, error }] = useMutation(UPDATE_BOOKMARK_MUTATION);
+
+    const [updateBookmark, { data, loading, error }] = useMutation(
+        UPDATE_BOOKMARK_MUTATION,
+        {
+            refetchQueries: [
+                {query: GET_BOOKMARKS},
+                'Bookmarks'
+            ]
+
+        });
     const [bookmark, setBookmark] = useState({ ...props.bookmark });
     const [newTag, setNewTag] = useState("");
 
@@ -37,14 +43,30 @@ const BookmarkCard = (props) => {
 
     const handleAddTag = () => {
         const updatedTags = [...bookmark.tags, { name: newTag, key: newTag, editMode:true }];
+
         setBookmark({ ...bookmark, tags: updatedTags });
+        console.log(bookmark)
         updateBookmark({
-        variables: {
-            url: bookmark.url,
-            tags: updatedTags.map((t) => t.name),
-        },
-        });
+            variables: {
+                url: bookmark.url,
+                tags: updatedTags.map((t) => t.name),
+            },
+            });
         setNewTag("");
+    };
+
+    const handleDeleteTag = (tagName) => {
+        console.log("updatedTags:")
+        const updatedTags = bookmark.tags.filter((t) => (t.name !== tagName));
+        console.log(updatedTags)
+        setBookmark({ ...bookmark, tags: updatedTags});
+        console.log(bookmark)
+        updateBookmark({
+            variables: {
+                url: bookmark.url,
+                tags: updatedTags.map((t) => t.name),
+            },
+        });
     };
 
     return (
@@ -65,6 +87,7 @@ const BookmarkCard = (props) => {
                 editMode={tag.editMode}
                 tag={tag}
                 onTagChange={handleUpdateTag}
+                onTagDelete={handleDeleteTag}
               />
             ))
   
