@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 
 
 const Tag = (props) => {
-  const [editing, setEditing] = useState(false);
+  const [editing, setEditing] = useState(props.editMode);
   const [tag, setTag] = useState({ ...props.tag });
   const [newTag, setNewTag] = useState({ ...props.tag });
 

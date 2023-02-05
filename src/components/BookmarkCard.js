@@ -16,6 +16,7 @@ const BookmarkCard = (props) => {
     `;
     const [updateBookmark, { data, loading, error }] = useMutation(UPDATE_BOOKMARK_MUTATION);
     const [bookmark, setBookmark] = useState({ ...props.bookmark });
+    const [newTag, setNewTag] = useState("");
 
     if (loading) return 'Submitting...';
     if (error) return (<Card title={error.message} className="py-7"/>);
@@ -34,6 +35,17 @@ const BookmarkCard = (props) => {
         } });
         };
 
+    const handleAddTag = () => {
+        const updatedTags = [...bookmark.tags, { name: newTag, key: newTag, editMode:true }];
+        setBookmark({ ...bookmark, tags: updatedTags });
+        updateBookmark({
+        variables: {
+            url: bookmark.url,
+            tags: updatedTags.map((t) => t.name),
+        },
+        });
+        setNewTag("");
+    };
 
     return (
       <Card title={bookmark.title} className="py-7">
@@ -48,15 +60,24 @@ const BookmarkCard = (props) => {
             { 
               bookmark.tags.map((tag) => (
               <Tag 
-                key={tag.name} 
+                key={tag.name}
                 enableEdit={true}
+                editMode={tag.editMode}
                 tag={tag}
                 onTagChange={handleUpdateTag}
               />
             ))
   
             }
-          </div>
+            <button className="ml-3 bg-green-500 rounded-full hover:bg-gray-400 p-2" 
+                    onClick={ () => {
+                        handleAddTag("");
+                        setNewTag("");
+                    }}
+            >
+            <span className="text-gray-100">+</span>
+            </button>
+          </div>        
           <div className='text-xs'>
             {bookmark.created_at}
           </div>
