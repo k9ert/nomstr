@@ -42,16 +42,16 @@ def get_bookmarks(tag: str =None):
     for bookmark in bookmarks:
         b = Bookmark(
             url=bookmark.url,
-            desc=bookmark.desc,
-            readlater=bookmark.readlater,
+            desc=bookmark.desc or "",
+            readlater=bookmark.readlater or "",
             annotations=[], #fixme
             tags=[Tag(name=tag.name) for tag in bookmark.tags ],
-            comments=[bookmark.comments],
-            user=bookmark.user,
-            shared=bookmark.shared,
-            created_at=bookmark.created_at,
-            updated_at=bookmark.updated_at,
-            title=bookmark.title
+            comments=[bookmark.comments or ""],
+            user=bookmark.user or "",
+            shared=bookmark.shared or "",
+            created_at=bookmark.created_at or "",
+            updated_at=bookmark.updated_at or "",
+            title=bookmark.title or ""
         )
         listOfBookmarks.append(b)
     return listOfBookmarks
@@ -90,6 +90,33 @@ class Mutation:
                 keep_those_tags.append(tag)
         print(keep_those_tags)
         bookmark.tags = keep_those_tags
+        app.db.session.add(bookmark)
+        app.db.session.commit()
+        return True
+    
+    @strawberry.mutation
+    def create_bookmark(self, url: str, title: str, desc: str, tags: List[str]) -> bool:
+        from flask import current_app as app
+        bookmark = AlBookmark.query.filter(AlBookmark.url == url).first()
+        if bookmark:
+            return False
+        existing_tags: List[AlTag] = []
+        for tag in tags:
+            existing_tag: List[AlTag] = AlTag.query.filter(AlTag.name == tag).first()
+            if existing_tag:
+                existing_tags.append(existing_tag)
+        if len(existing_tags) != len(tags):
+            # There are new tags
+            new_tags = [ tag for tag in tags if tag not in [ tag_.name for tag_ in existing_tags] ]
+
+            for tag_name in new_tags:
+                tag = AlTag.query.filter(AlTag.name == tag_name).first()
+                if not tag:
+                    tag = AlTag(name=tag_name)
+                    app.db.session.add(tag)
+                    app.db.session.commit()
+                existing_tags.append(tag)
+        bookmark = AlBookmark(url = url, title = title, desc = desc, tags = existing_tags)
         app.db.session.add(bookmark)
         app.db.session.commit()
         return True

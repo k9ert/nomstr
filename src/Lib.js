@@ -42,21 +42,6 @@ import { BookmarkCard } from "./components/BookmarkCard.js";
     )
   }
   
-  const TagCloud = (props) => {
-  
-    return (
-      <div className='flex justify-center flex-wrap max-w-4xl'>
-        { 
-          props.tags.map((tag) => (
-            <Tag key={tag.name} tag={tag}/>
-          ))
-        }
-      </div>
-    )
-  }
-  
-
-
   const LinkList = (props) => {
     const bookmarks = props.bookmarks
     return (
@@ -86,4 +71,4 @@ import { BookmarkCard } from "./components/BookmarkCard.js";
     }
   }
   
-  export { Card, TopNavBar, TagCloud, LinkList, Alert};
+  export { Card, TopNavBar, LinkList, Alert};

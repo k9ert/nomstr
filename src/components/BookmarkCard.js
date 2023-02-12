@@ -1,6 +1,6 @@
 import { Card } from '../Lib'
 import { Tag } from './Tag'
-import { gql, useMutation } from '@apollo/client';
+import { useMutation } from '@apollo/client';
 import { useState } from 'react';
 import { Link } from "react-router-dom";
 import { GET_BOOKMARKS } from '../queries';
@@ -9,8 +9,6 @@ import { UPDATE_BOOKMARK_MUTATION } from '../queries';
 
 
 const BookmarkCard = (props) => {
-
-   
 
     const [updateBookmark, { data, loading, error }] = useMutation(
         UPDATE_BOOKMARK_MUTATION,
@@ -28,12 +26,10 @@ const BookmarkCard = (props) => {
     if (error) return (<Card title={error.message} className="py-7"/>);
 
     const handleUpdateTag = (oldValue, newValue) => {
-        console.log(oldValue + " " + newValue)
         var updatedTags = bookmark.tags.map((t) => ({
                 name: t.name === oldValue ? newValue : t.name,
                 key: t.name === oldValue ? newValue : t.name
             }));
-        console.log(updatedTags)
         setBookmark({ ...bookmark, tags: updatedTags });
         updateBookmark({ variables: { 
             url: bookmark.url, 
@@ -45,7 +41,6 @@ const BookmarkCard = (props) => {
         const updatedTags = [...bookmark.tags, { name: newTag, key: newTag, editMode:true }];
 
         setBookmark({ ...bookmark, tags: updatedTags });
-        console.log(bookmark)
         updateBookmark({
             variables: {
                 url: bookmark.url,
@@ -56,11 +51,8 @@ const BookmarkCard = (props) => {
     };
 
     const handleDeleteTag = (tagName) => {
-        console.log("updatedTags:")
         const updatedTags = bookmark.tags.filter((t) => (t.name !== tagName));
-        console.log(updatedTags)
         setBookmark({ ...bookmark, tags: updatedTags});
-        console.log(bookmark)
         updateBookmark({
             variables: {
                 url: bookmark.url,

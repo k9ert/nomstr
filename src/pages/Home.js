@@ -1,5 +1,6 @@
 import { useQuery } from '@apollo/client';
-import { TagCloud, LinkList } from "../Lib.js"
+import { LinkList } from "../Lib.js"
+import { TagCloud } from '../components/TagCloud';
 import { GET_BOOKMARKS } from '../queries.js';
 
 const Home = () => {
