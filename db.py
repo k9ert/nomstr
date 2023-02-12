@@ -16,7 +16,7 @@ class Tag(app.db.Model):
     id = Column(Integer, primary_key=True)
     name = Column(String)
     bookmark_id = Column(Integer, ForeignKey("bookmark.id"))
-    bookmarks = relationship("Bookmark", secondary=bookmark_tags, backref="tags")
+    bookmarks = relationship("Bookmark", secondary=bookmark_tags, uselist=True, back_populates="tags")
 
 class Bookmark(app.db.Model):
     __tablename__ = 'bookmark'
@@ -31,6 +31,7 @@ class Bookmark(app.db.Model):
     created_at = Column(String)
     updated_at = Column(String)
     title = Column(String)
+    tags = relationship("Tag", secondary=bookmark_tags, uselist=True, back_populates="bookmarks")
 
 
 def fill_database(session, data):

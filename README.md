@@ -65,6 +65,9 @@ Added Layout with nesting
 ## v0.3.0
 * Adding and deleting tags
 
+## v0.4.0
+* Backend now works via SQLAlchemy in a SQLLite instance
+* Two tables: Tag and Bookmark
 
 
 

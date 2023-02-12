@@ -2,6 +2,10 @@ import typing
 import strawberry
 from typing import List
 import json
+from db import Bookmark as AlBookmark, Tag as AlTag
+
+
+
 
 @strawberry.type
 class Tag:
@@ -27,37 +31,38 @@ class Bookmark:
 
 
 def get_bookmarks(tag: str =None):
-    with open("data.json") as json_file:
-        data = json.load(json_file)
+    from flask import current_app as app
+    if tag:
+        tag: AlTag = app.db.session.query(AlTag).filter(AlTag.name ==tag).first()
+        bookmarks = tag.bookmarks
+    else:
+        bookmarks = AlBookmark.query.all()
     listOfBookmarks = []
-    for item in data:
-        if tag is None or tag in item["tags"]:
-            b = Bookmark(
-                url=item["url"],
-                desc=item["desc"],
-                readlater=item["readlater"],
-                annotations=[], #fixme
-                tags=[Tag(name=tag) for tag in item["tags"].split(",")],
-                comments=item["comments"],
-                user=item["user"],
-                shared=item["shared"],
-                created_at=item["created_at"],
-                updated_at=item["updated_at"],
-                title=item["title"]
-            )
-            listOfBookmarks.append(b)
+    bookmark: AlBookmark
+    for bookmark in bookmarks:
+        b = Bookmark(
+            url=bookmark.url,
+            desc=bookmark.desc,
+            readlater=bookmark.readlater,
+            annotations=[], #fixme
+            tags=[Tag(name=tag.name) for tag in bookmark.tags ],
+            comments=[bookmark.comments],
+            user=bookmark.user,
+            shared=bookmark.shared,
+            created_at=bookmark.created_at,
+            updated_at=bookmark.updated_at,
+            title=bookmark.title
+        )
+        listOfBookmarks.append(b)
     return listOfBookmarks
 
 def get_tags():
-    with open("data.json") as json_file:
-        data = json.load(json_file)
     list_of_tags = []
-    for item in data:
-        tags = item["tags"].split(",")
-        list_of_tags.extend(tags)
+    tag: AlTag
+    for tag in AlTag.query.all():
+        tag = tag.name
+        list_of_tags.append(tag)
     list_of_tags = list(set(list_of_tags)) # remove duplicates
-
-
     return [Tag(name=tag) for tag in list_of_tags]
 
 @strawberry.type
@@ -69,21 +74,25 @@ class Query:
 class Mutation:
     @strawberry.mutation
     def update_bookmark(self, url: str, tags: List[str]) -> bool:
-        with open("data.json") as json_file:
-            data = json.load(json_file)
-        changed = False
-        for bookmark in data:
-            if bookmark["url"] == url:
-                bookmark["tags"] = ",".join(tags)
-                changed = True
-        if changed:
-            with open("data.json", "w") as json_file:
-                json.dump(data, json_file)
-            print(f"Tags ({tags})written !")
-        else:
-            print(f"Could not find url: {url}")
-        return changed
+        from flask import current_app as app
+        bookmark = AlBookmark.query.filter(AlBookmark.url == url).first()
+        keep_those_tags: List[AlTag] = [ tag for tag in bookmark.tags if tag.name in tags ]
+        if len(keep_those_tags) != len(tags):
+            # There are new tags
+            new_tags = [ tag for tag in tags if tag not in [ tag_.name for tag_ in keep_those_tags] ]
+
+            for tag_name in new_tags:
+                tag = AlTag.query.filter(AlTag.name == tag_name).first()
+                if not tag:
+                    tag = AlTag(name=tag_name)
+                    app.db.session.add(tag)
+                    app.db.session.commit()
+                keep_those_tags.append(tag)
+        print(keep_those_tags)
+        bookmark.tags = keep_those_tags
+        app.db.session.add(bookmark)
+        app.db.session.commit()
+        return True
 
 
 
-schema = strawberry.Schema(query=Query, mutation=Mutation)
