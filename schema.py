@@ -10,6 +10,7 @@ from db import Bookmark as AlBookmark, Tag as AlTag
 @strawberry.type
 class Tag:
     name: str
+    count: int
 
 
 @strawberry.type
@@ -30,13 +31,22 @@ class Bookmark:
 
 
 
-def get_bookmarks(tag: str =None):
+def get_bookmarks(first: int = None, after: int = None, last: int = None, before: int = None, tag: str = None):
     from flask import current_app as app
+    query = app.db.session.query(AlBookmark)
     if tag:
-        tag: AlTag = app.db.session.query(AlTag).filter(AlTag.name ==tag).first()
-        bookmarks = tag.bookmarks
-    else:
-        bookmarks = AlBookmark.query.all()
+        tag = app.db.session.query(AlTag).filter(AlTag.name == tag).first()
+        query = query.join(AlTag.bookmarks).filter(AlTag.id == tag.id)
+    if after:
+        query = query.filter(AlBookmark.id > after).order_by(AlBookmark.id.desc())
+    elif before:
+        query = query.filter(AlBookmark.id < before)
+    query = query.order_by(AlBookmark.id.desc()).order_by(AlBookmark.id.asc())
+    if last:
+        query = query.limit(last)
+    elif first:
+        query = query.limit(first)
+    bookmarks = query.all()
     listOfBookmarks = []
     bookmark: AlBookmark
     for bookmark in bookmarks:
@@ -60,10 +70,8 @@ def get_tags():
     list_of_tags = []
     tag: AlTag
     for tag in AlTag.query.all():
-        tag = tag.name
-        list_of_tags.append(tag)
-    list_of_tags = list(set(list_of_tags)) # remove duplicates
-    return [Tag(name=tag) for tag in list_of_tags]
+        list_of_tags.append(Tag(name=tag.name, count=len(tag.bookmarks)) )
+    return list_of_tags
 
 @strawberry.type
 class Query:
