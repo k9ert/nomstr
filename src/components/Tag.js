@@ -33,7 +33,9 @@ const Tag = (props) => {
         />
         ) : (
         <Link to={"/tag/" + tag.name} className="text-sm">
-            <span className="text-white">{tag.name}</span>
+            <span className="text-white" style={{ fontSize: `${Math.max(tag.count / 7, 1)}rem` }}>
+              {tag.name}
+            </span>
         </Link>
         )}
         {props.enableEdit && (

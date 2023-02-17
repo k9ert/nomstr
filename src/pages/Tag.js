@@ -1,7 +1,8 @@
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
-import { LinkList, Card } from "../Lib.js"
+import { Card } from "../Lib.js"
 import { TagCloud } from '../components/TagCloud.js';
+import { BookmarkList } from '../components/BookmarkList.js';
 import { Tag } from "../components/Tag"
 import { GET_BOOKMARKS } from "../queries"
 
@@ -24,7 +25,7 @@ const TagPage = (props) => {
             
             <TagCloud tags={data.tags}/>
             </nav>
-            <LinkList bookmarks={data.bookmarks}></LinkList>
+            <BookmarkList bookmarks={data.bookmarks}></BookmarkList>
         </div>
     );
 }

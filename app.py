@@ -1,8 +1,12 @@
 from flask import Flask
 from strawberry.flask.views import GraphQLView
 from flask_cors import CORS
-
+import logging
 from flask_sqlalchemy import SQLAlchemy
+
+logging.basicConfig(encoding='utf-8', level=logging.DEBUG)
+
+logger = logging.getLogger(__name__)
 
 app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "http://127.0.0.1:3000"}})

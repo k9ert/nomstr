@@ -1,6 +1,4 @@
 import { Link } from "react-router-dom";
-import { Tag } from './components/Tag.js'
-import { BookmarkCard } from "./components/BookmarkCard.js";
 
   
   const Card = (props) => {
@@ -41,20 +39,6 @@ import { BookmarkCard } from "./components/BookmarkCard.js";
     </nav>
     )
   }
-  
-  const LinkList = (props) => {
-    const bookmarks = props.bookmarks
-    return (
-        <div className='col-span-5'>
-
-          {bookmarks.map((bookmark) => (
-            <BookmarkCard key={bookmark.url} bookmark={bookmark}/>
-          ))
-          }
-        </div>
-
-    )
-  }
 
   const Alert = (props) => {
     const text = props.alertText
@@ -71,4 +55,4 @@ import { BookmarkCard } from "./components/BookmarkCard.js";
     }
   }
   
-  export { Card, TopNavBar, LinkList, Alert};
+  export { Card, TopNavBar, Alert};

@@ -1,12 +1,14 @@
-import typing
-import strawberry
-from typing import List
 import json
-from db import Bookmark as AlBookmark, Tag as AlTag
+import logging
+import typing
+from typing import List, Optional
 
+import strawberry
 
+from db import Bookmark as AlBookmark
+from db import Tag as AlTag
 
-
+logger = logging.getLogger(__name__)
 @strawberry.type
 class Tag:
     name: str
@@ -27,26 +29,52 @@ class Bookmark:
     updated_at: str
     title: str
 
+@strawberry.type
+class PageMeta:
+    next_cursor: Optional[int] = strawberry.field(
+        description="The next cursor to continue with."
+    )
+    max_cursor: int = strawberry.field(
+        description="The max cursor"
+    )
 
+@strawberry.type
+class BookmarkResponse:
+    bookmarks: List[Bookmark] = strawberry.field(
+        description="The list of bookmarks."
+    )
+
+    page_meta: PageMeta = strawberry.field(
+        description="Metadata to aid in pagination."
+    )
 
 
 
 def get_bookmarks(first: int = None, after: int = None, last: int = None, before: int = None, tag: str = None):
     from flask import current_app as app
     query = app.db.session.query(AlBookmark)
+    all_query = app.db.session.query(AlBookmark)
     if tag:
         tag = app.db.session.query(AlTag).filter(AlTag.name == tag).first()
         query = query.join(AlTag.bookmarks).filter(AlTag.id == tag.id)
+        all_query = all_query.join(AlTag.bookmarks).filter(AlTag.id == tag.id)
     if after:
-        query = query.filter(AlBookmark.id > after).order_by(AlBookmark.id.desc())
+        query = query.filter(AlBookmark.id > after).order_by(AlBookmark.id.asc())
     elif before:
-        query = query.filter(AlBookmark.id < before)
-    query = query.order_by(AlBookmark.id.desc()).order_by(AlBookmark.id.asc())
+        query = query.filter(AlBookmark.id < before).order_by(AlBookmark.id.desc())
     if last:
         query = query.limit(last)
+        next_cursor = before - last
     elif first:
         query = query.limit(first)
+        next_cursor = after + first
+    else:
+        next_cursor = 0
+    logger.info(f"query: {query}")
+    logger.info(f"first: {first} after: {after} last: {last} before: {before}")
     bookmarks = query.all()
+    all_bookmarks_count = all_query.count()
+    print(bookmarks)
     listOfBookmarks = []
     bookmark: AlBookmark
     for bookmark in bookmarks:
@@ -55,7 +83,7 @@ def get_bookmarks(first: int = None, after: int = None, last: int = None, before
             desc=bookmark.desc or "",
             readlater=bookmark.readlater or "",
             annotations=[], #fixme
-            tags=[Tag(name=tag.name) for tag in bookmark.tags ],
+            tags=[Tag(name=tag.name, count=None) for tag in bookmark.tags ],
             comments=[bookmark.comments or ""],
             user=bookmark.user or "",
             shared=bookmark.shared or "",
@@ -64,7 +92,7 @@ def get_bookmarks(first: int = None, after: int = None, last: int = None, before
             title=bookmark.title or ""
         )
         listOfBookmarks.append(b)
-    return listOfBookmarks
+    return BookmarkResponse(bookmarks=listOfBookmarks, page_meta=PageMeta(next_cursor=next_cursor, max_cursor=all_bookmarks_count))
 
 def get_tags():
     list_of_tags = []
@@ -76,7 +104,7 @@ def get_tags():
 @strawberry.type
 class Query:
     tags: typing.List[Tag] = strawberry.field(resolver=get_tags)
-    bookmarks: typing.List[Bookmark] = strawberry.field(resolver=get_bookmarks)
+    bookmarks: BookmarkResponse = strawberry.field(resolver=get_bookmarks)
 
 @strawberry.type
 class Mutation:
