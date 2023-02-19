@@ -6,12 +6,12 @@ import { GET_BOOKMARKS } from '../queries.js';
 
 const BookmarkList = (props) => {
     const tag = props.tag
-    const pageSize = 20
-    
+    const [pageSize, setPageSize] = useState(20);
     const [after, setAfter] = useState(0);
 
-    const handlePageChange = (newPage) => {
+    const handlePageChange = (newPage, resultsPerPage) => {
         newPage = newPage < 0 ? 0 : newPage
+        setPageSize(resultsPerPage)
         setAfter(newPage*pageSize);
     };
     const { loading, error, data } = useQuery(

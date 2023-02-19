@@ -1,14 +1,23 @@
 import React from "react";
+import { useState } from 'react';
 
 const Pagination = ({ currentPage, totalPages, onPageChange }) => {
   
+  const [resultsPerPage, setResultsPerPage] = useState(10);
+
   //returns an array like (4,8): [4,5,6,7,8]
   const range = (start, end) =>
     [...Array(end - start + 1)].map((_, i) => start + i);
   
 
   const handleClick = (page) => {
-    onPageChange(page);
+    onPageChange(page, resultsPerPage);
+  };
+
+  const handleResultsPerPageChange = (event) => {
+    setResultsPerPage(event.target.value);
+    console.log(event.target.value)
+    onPageChange(0, Number(event.target.value)); // Reset the current page to 0 when changing the results per page
   };
 
   const renderPageNumbers = () => {
@@ -28,6 +37,23 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         </a>
       </div>
     ));
+  };
+
+  const renderResultsPerPageDropdown = () => {
+    const options = [5, 10, 20];
+    return (
+      <select
+        className="border-gray-500 border px-4 py-2 mx-1 rounded-lg"
+        value={resultsPerPage}
+        onChange={handleResultsPerPageChange}
+      >
+        {options.map((option) => (
+          <option key={option} value={option}>
+            {option} per page
+          </option>
+        ))}
+      </select>
+    );
   };
 
   return (
@@ -62,6 +88,13 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
         >
           Next
         </a>
+        {/* Results per page dropdown */}
+        <div className="flex items-center mx-2">
+          <label htmlFor="results-per-page" className="mr-2">
+            Results per page:
+          </label>
+          {renderResultsPerPageDropdown()}
+        </div>
       </nav>
     </div>
   );
