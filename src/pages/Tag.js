@@ -17,16 +17,18 @@ const TagPage = (props) => {
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error : {error.message}</p>;
     return (
-        <div className='grid grid-cols-6'>
-            <nav className="col-span-1 flex flex-col items-center h-screen w-64 bg-gray-300 pt-5 px-2 ">
-            <Card>
-                <Tag tag={tag}/>
-            </Card>
-            
-            <TagCloud tags={data.tags}/>
+        <>
+            <nav className="flex-col items-center h-screen w-64 bg-gray-300 pt-5 px-2 ">
+                <Card>
+                    <Tag tag={tag}/>
+                </Card>
+                
+                <TagCloud tags={data.tagResponse.tags}/>
             </nav>
-            <BookmarkList bookmarks={data.bookmarks}></BookmarkList>
-        </div>
+            <div className="col-span-5 flex bg-gray-300 pt-5 px-2">
+                <BookmarkList tag={tag}></BookmarkList>
+            </div>
+        </>
     );
 }
 

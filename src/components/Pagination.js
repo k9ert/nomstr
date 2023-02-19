@@ -82,7 +82,7 @@ const Pagination = ({ currentPage, totalPages, pageSize, onPageChange }) => {
   };
 
   const renderResultsPerPageDropdown = () => {
-    const options = [5, 10, 20];
+    const options = [5, 10, 20, 50];
     return (
       <select
         className="border-gray-500 border px-4 py-2 mx-1 rounded-lg"

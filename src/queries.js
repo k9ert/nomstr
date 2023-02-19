@@ -23,18 +23,26 @@ export const GET_BOOKMARKS = gql`
         maxCursor
       }
     }
-    tags {
+    tagResponse {
+      tags {
         name
         count
+      }
     }
   }
 `;
 
 export const GET_TAGS = gql`
-  query Tags {
-    tags {
+  query Tags($first: Int, $after: Int, $last: Int, $before: Int) {
+    tagResponse(first: $first,after: $after,last: $last,before: $before) {
+      tags {
         name
         count
+      }
+      pageMeta {
+        nextCursor
+        maxCursor
+      }
     }
   }
 `;

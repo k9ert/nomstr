@@ -1,5 +1,6 @@
 import { Outlet } from "react-router-dom";
-import { TopNavBar, Alert } from "../Lib.js"
+import { Alert } from "../Lib.js"
+import { TopNavBar } from "../components/TopNavBar.js"
 import { AddBookmarkOverlay } from "../components/AddBookmark.js"
 
 const Layout = () => {
@@ -10,7 +11,10 @@ const Layout = () => {
             <TopNavBar/>
             <AddBookmarkOverlay/>
             <Alert text="alert Text!!"/>
-            <Outlet/>
+            <div className='grid grid-cols-6'>
+                <Outlet/>
+            </div>
+            
         </div>
 
     </>

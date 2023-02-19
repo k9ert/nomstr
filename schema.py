@@ -48,6 +48,14 @@ class BookmarkResponse:
         description="Metadata to aid in pagination."
     )
 
+@strawberry.type
+class TagResponse:
+    tags: List[Tag] = strawberry.field(
+        description="The list of tags."
+    )
+    page_meta: PageMeta = strawberry.field(
+        description="Metadata to aid in pagination."
+    )
 
 
 def get_bookmarks(first: int = None, after: int = None, last: int = None, before: int = None, tag: str = None):
@@ -70,7 +78,7 @@ def get_bookmarks(first: int = None, after: int = None, last: int = None, before
         next_cursor = after + first
     else:
         next_cursor = 0
-    logger.info(f"query: {query}")
+    #logger.info(f"query: {query}")
     logger.info(f"first: {first} after: {after} last: {last} before: {before}")
     bookmarks = query.all()
     all_bookmarks_count = all_query.count()
@@ -92,18 +100,36 @@ def get_bookmarks(first: int = None, after: int = None, last: int = None, before
             title=bookmark.title or ""
         )
         listOfBookmarks.append(b)
+    logger.info(f"Found {len(bookmarks)} bookmarks from {all_bookmarks_count} ")
     return BookmarkResponse(bookmarks=listOfBookmarks, page_meta=PageMeta(next_cursor=next_cursor, max_cursor=all_bookmarks_count))
 
-def get_tags():
+def get_tags(first: int = None, after: int = None, last: int = None, before: int = None):
+    from flask import current_app as app
+    query = app.db.session.query(AlTag)
+    all_query = app.db.session.query(AlTag)
+    if after:
+        query = query.filter(AlTag.id > after).order_by(AlTag.id.asc())
+    elif before:
+        query = query.filter(AlTag.id < before).order_by(AlTag.id.desc())
+    if last:
+        query = query.limit(last)
+        next_cursor = before - last
+    elif first:
+        query = query.limit(first)
+        next_cursor = after + first
+    else:
+        next_cursor = 0
+    tags = query.all()
+    all_tags_count = all_query.count()
     list_of_tags = []
     tag: AlTag
-    for tag in AlTag.query.all():
+    for tag in tags:
         list_of_tags.append(Tag(name=tag.name, count=len(tag.bookmarks)) )
-    return list_of_tags
+    return TagResponse(tags=list_of_tags, page_meta=PageMeta(next_cursor=next_cursor, max_cursor=all_tags_count))
 
 @strawberry.type
 class Query:
-    tags: typing.List[Tag] = strawberry.field(resolver=get_tags)
+    tag_response: TagResponse = strawberry.field(resolver=get_tags)
     bookmarks: BookmarkResponse = strawberry.field(resolver=get_bookmarks)
 
 @strawberry.type

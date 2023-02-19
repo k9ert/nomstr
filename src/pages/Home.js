@@ -8,15 +8,20 @@ const Home = () => {
     if (loading) return <p>Loading...</p>;
     if (error) return <p>Error : {error.message}</p>;
 
-    const tags = data.tags
+    const tags = data.tagResponse.tags
 
     return (
-        <div className='grid grid-cols-6'>
-            <nav className="col-span-1 flex flex-col items-center bg-gray-300 pt-5 px-2 ">
-            <TagCloud tags={tags}/>
+        <>
+            <nav className="flex-col items-center h-screen w-64 bg-gray-300 pt-5 px-2 ">
+                <TagCloud tags={tags}/>
             </nav>
-            <BookmarkList bookmarks={data.bookmarks}></BookmarkList>
-        </div>
+            <div className="col-span-5">
+                <BookmarkList bookmarks={data.bookmarks}></BookmarkList>
+            </div>
+        </>
+
+
+        
     );
 }
 
