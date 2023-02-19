@@ -24,22 +24,18 @@ const BookmarkList = (props) => {
 
     const bookmarks = data.bookmarks.bookmarks
     const pageMeta = data.bookmarks.pageMeta
-    console.log(pageMeta.maxCursor)
-    console.log(pageMeta)
     const totalPages = Math.ceil(pageMeta.maxCursor / pageSize)
-    console.log(totalPages)
-    const currentPage = after / pageSize
-    console.log(totalPages)
+    const currentPage = Math.ceil(after / pageSize)
 
     return (
         <div className='col-span-5'>
           Page {currentPage} from {totalPages} (after = {after})
-          <Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={handlePageChange}/>
+          <Pagination currentPage={currentPage} totalPages={totalPages} pageSize={pageSize} onPageChange={handlePageChange}/>
           {bookmarks.map((bookmark) => (
             <BookmarkCard key={bookmark.url} bookmark={bookmark}/>
           ))
           }
-          <Pagination currentPage="0" totalPages={totalPages} onPageChange={handlePageChange}/>
+          <Pagination currentPage={currentPage} totalPages={totalPages} pageSize={pageSize} onPageChange={handlePageChange}/>
         </div>
 
     )

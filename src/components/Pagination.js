@@ -1,42 +1,84 @@
 import React from "react";
 import { useState } from 'react';
 
-const Pagination = ({ currentPage, totalPages, onPageChange }) => {
-  
-  const [resultsPerPage, setResultsPerPage] = useState(10);
+const NoPageElement = () => {
+  return (
+    <div
+      key="prev-ellipsis"
+      className="border-gray-500 border px-4 py-1 mx-1 rounded-lg hover:bg-gray-200 cursor-not-allowed"
+      onClick={(e) => e.preventDefault()}
+    >
+      ...
+    </div>
+  )
 
-  //returns an array like (4,8): [4,5,6,7,8]
-  const range = (start, end) =>
-    [...Array(end - start + 1)].map((_, i) => start + i);
-  
+}
+
+const PageElement = ({page, currentPage, handleClick}) => {
+  return (  <div
+      key={page}
+      className={`${
+        currentPage === page ? "bg-gray-500 text-white" : "bg-white"
+      } border-gray-500 border px-4 py-1 mx-1 rounded-lg hover:bg-gray-200`}
+      onClick={() => handleClick(page)}
+    >
+      {page}
+    </div>
+  )
+}
+
+const Pagination = ({ currentPage, totalPages, pageSize, onPageChange }) => {
+  const [resultsPerPage, setResultsPerPage] = useState(pageSize);
 
   const handleClick = (page) => {
+    console.log(typeof( page ))
     onPageChange(page, resultsPerPage);
   };
 
   const handleResultsPerPageChange = (event) => {
-    setResultsPerPage(event.target.value);
-    console.log(event.target.value)
+    setResultsPerPage(Number(event.target.value));
     onPageChange(0, Number(event.target.value)); // Reset the current page to 0 when changing the results per page
   };
 
-  const renderPageNumbers = () => {
-    const pageNumbers = range(0, totalPages-1);
+  const PageNumbers = ({currentPage}) => {
+    console.log({ currentPage: Number(currentPage)})
+    const start = currentPage - 1 < 0 ? 0 : currentPage-1
+    const end = currentPage + 1 > totalPages ? totalPages : currentPage +1
+    console.log({start:start,end:end})
+    const pageNumbers = [...Array(end - start + 1)].map((_, i) => start + i);
+    console.log(pageNumbers)
 
-    return pageNumbers.map((page) => (
-      
-      <div key={page}>
-        <a
-          href="#"
-          className={`${
-            currentPage == page ? "bg-gray-500 text-white" : "bg-white"
-          } border-gray-500 border px-4 py-2 mx-1 rounded-lg hover:bg-gray-200`}
-          onClick={() => handleClick(page)}
-        >
-          {page}
-        </a>
-      </div>
-    ));
+    const renderPages = () => {
+      const pages = [];
+
+      if (currentPage >= 3) {
+        pages.push(
+          <PageElement page={0} currentPage={currentPage} handleClick={handleClick}/>
+        );
+        pages.push(
+          <NoPageElement/>
+        );
+      }
+
+      pageNumbers.forEach((page) => {
+        pages.push(
+          <PageElement page={page} currentPage={currentPage} handleClick={handleClick}/>
+        );
+      });
+
+      if (currentPage+2 < totalPages) {
+        pages.push(
+          <NoPageElement/>
+        );
+        pages.push(
+          <PageElement page={totalPages} currentPage={currentPage} handleClick={handleClick}/>
+        );
+      }
+
+      return pages;
+    };
+
+    return <>{renderPages()}</>;
   };
 
   const renderResultsPerPageDropdown = () => {
@@ -60,8 +102,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
     <div className="flex justify-center my-4">
       <nav className="inline-flex shadow-lg">
         {/* Previous button */}
-        <a
-          href="#"
+        <div
           className={`${
             currentPage === 0
               ? "bg-gray-100 cursor-not-allowed"
@@ -71,14 +112,15 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
           disabled={currentPage === 0}
         >
           Previous
-        </a>
+        </div>
 
         {/* Pagination buttons */}
-        <div className="flex">{renderPageNumbers()}</div>
+        <div className="flex">
+          <PageNumbers currentPage={currentPage}/>
+        </div>
 
         {/* Next button */}
-        <a
-          href="#"
+        <div
           className={`${
             currentPage === totalPages-1
               ? "bg-gray-100 cursor-not-allowed"
@@ -87,7 +129,7 @@ const Pagination = ({ currentPage, totalPages, onPageChange }) => {
           onClick={(event) => { currentPage === totalPages-1 || handleClick(currentPage + 1) }}
         >
           Next
-        </a>
+        </div>
         {/* Results per page dropdown */}
         <div className="flex items-center mx-2">
           <label htmlFor="results-per-page" className="mr-2">

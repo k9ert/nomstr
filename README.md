@@ -69,6 +69,15 @@ Added Layout with nesting
 * Backend now works via SQLAlchemy in a SQLLite instance
 * Two tables: Tag and Bookmark
 
+## v0.5.0
+* handleResultsPerPageChange
+
+## v0.6.0
+* pagination for bookmarks, count for tags (reasonable tag cloud)
+* change results per Page
+
+
+
 
 
 
