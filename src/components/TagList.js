@@ -8,15 +8,22 @@ const TagList = (props) => {
     const tag = props.tag
     const [pageSize, setPageSize] = useState(20);
     const [after, setAfter] = useState(0);
+    const [minCount, setMinCount] = useState(0);
 
     const handlePageChange = (newPage, resultsPerPage) => {
         newPage = newPage < 0 ? 0 : newPage
         setPageSize(resultsPerPage)
         setAfter(newPage*pageSize);
     };
+
+    const handleSliderChange = (newMinCount) => {
+        setAfter(0)
+        setMinCount(newMinCount)
+    }
+
     const { loading, error, data } = useQuery(
         GET_TAGS, {
-            variables: { tag: tag, first:pageSize, after: after }
+            variables: { tag: tag, first:pageSize, after: after, minCount: minCount }
         }
     );
     if (loading) return <p>Loading...</p>;
@@ -29,13 +36,15 @@ const TagList = (props) => {
 
     return (
         <div className='col-span-5'>
-          Page {currentPage} from {totalPages} (after = {after})
-          <Pagination currentPage={currentPage} totalPages={totalPages} pageSize={pageSize} onPageChange={handlePageChange}/>
+          Page {currentPage} from {totalPages} (after = {after} results={pageMeta.resultCount})
+          <Pagination currentPage={currentPage} totalPages={totalPages} pageSize={pageSize} 
+                onPageChange={handlePageChange} slider={true} onSliderChange={handleSliderChange} sliderValueProps={minCount}/>
           {tags.map((tag) => (
             <TagCard key={tag.name} tag={tag}/>
           ))
           }
-          <Pagination currentPage={currentPage} totalPages={totalPages} pageSize={pageSize} onPageChange={handlePageChange}/>
+          <Pagination currentPage={currentPage} totalPages={totalPages} pageSize={pageSize} 
+                onPageChange={handlePageChange} slider={true} onSliderChange={handleSliderChange} sliderValueProps={minCount}/>
         </div>
 
     )

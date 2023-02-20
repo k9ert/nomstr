@@ -21,10 +21,12 @@ export const GET_BOOKMARKS = gql`
       pageMeta {
         nextCursor
         maxCursor
+        resultCount
       }
     }
     tagResponse {
       tags {
+        id
         name
         count
       }
@@ -33,15 +35,17 @@ export const GET_BOOKMARKS = gql`
 `;
 
 export const GET_TAGS = gql`
-  query Tags($first: Int, $after: Int, $last: Int, $before: Int) {
-    tagResponse(first: $first,after: $after,last: $last,before: $before) {
+  query Tags($first: Int, $after: Int, $last: Int, $before: Int, $minCount: Int) {
+    tagResponse(first: $first,after: $after,last: $last,before: $before, minCount: $minCount) {
       tags {
+        id
         name
         count
       }
       pageMeta {
         nextCursor
         maxCursor
+        resultCount
       }
     }
   }

@@ -7,10 +7,16 @@ import strawberry
 
 from db import Bookmark as AlBookmark
 from db import Tag as AlTag
+from db import bookmark_tags
+from sqlalchemy.orm import aliased
+from sqlalchemy import func
+from sqlalchemy import desc
+
 
 logger = logging.getLogger(__name__)
 @strawberry.type
 class Tag:
+    id: int
     name: str
     count: int
 
@@ -36,6 +42,9 @@ class PageMeta:
     )
     max_cursor: int = strawberry.field(
         description="The max cursor"
+    )
+    result_count: int = strawberry.field(
+        description="The number of result items"
     )
 
 @strawberry.type
@@ -91,7 +100,7 @@ def get_bookmarks(first: int = None, after: int = None, last: int = None, before
             desc=bookmark.desc or "",
             readlater=bookmark.readlater or "",
             annotations=[], #fixme
-            tags=[Tag(name=tag.name, count=None) for tag in bookmark.tags ],
+            tags=[Tag(id = tag.id, name=tag.name, count=None) for tag in bookmark.tags ],
             comments=[bookmark.comments or ""],
             user=bookmark.user or "",
             shared=bookmark.shared or "",
@@ -101,31 +110,43 @@ def get_bookmarks(first: int = None, after: int = None, last: int = None, before
         )
         listOfBookmarks.append(b)
     logger.info(f"Found {len(bookmarks)} bookmarks from {all_bookmarks_count} ")
-    return BookmarkResponse(bookmarks=listOfBookmarks, page_meta=PageMeta(next_cursor=next_cursor, max_cursor=all_bookmarks_count))
+    page_meta=PageMeta(next_cursor=next_cursor, max_cursor=all_bookmarks_count, result_count=len(bookmarks))
+    return BookmarkResponse(bookmarks=listOfBookmarks, page_meta=page_meta)
 
-def get_tags(first: int = None, after: int = None, last: int = None, before: int = None):
+def get_tags(first: int = None, after: int = None, last: int = None, before: int = None, min_count: int = None):
     from flask import current_app as app
     query = app.db.session.query(AlTag)
     all_query = app.db.session.query(AlTag)
+
+    if min_count:
+        tag_count_subquery = (app.db.session
+            .query(AlTag.id, func.count(bookmark_tags.c.bookmark_id).label('bookmark_count'))
+            .join(bookmark_tags)
+            .group_by(AlTag.id)
+            .subquery())
+
+        query = query \
+            .join(tag_count_subquery, tag_count_subquery.c.id == AlTag.id) \
+            .filter(tag_count_subquery.c.bookmark_count > min_count)
+    logger.info(f"first:{first} after:{after}")
     if after:
-        query = query.filter(AlTag.id > after).order_by(AlTag.id.asc())
-    elif before:
-        query = query.filter(AlTag.id < before).order_by(AlTag.id.desc())
-    if last:
-        query = query.limit(last)
-        next_cursor = before - last
-    elif first:
+        query = query.filter(AlTag.id > after)
+        query = query.order_by(AlTag.id.asc())
+    if first:
         query = query.limit(first)
-        next_cursor = after + first
-    else:
-        next_cursor = 0
     tags = query.all()
+    next_cursor = 0
+    if first and after:
+        next_cursor = tags[-1].id + 1
     all_tags_count = all_query.count()
+    max_cursor = all_query.order_by(desc(AlTag.id)).first().id
     list_of_tags = []
     tag: AlTag
     for tag in tags:
-        list_of_tags.append(Tag(name=tag.name, count=len(tag.bookmarks)) )
-    return TagResponse(tags=list_of_tags, page_meta=PageMeta(next_cursor=next_cursor, max_cursor=all_tags_count))
+        list_of_tags.append(Tag(id=tag.id, name=tag.name, count=len(tag.bookmarks)) )
+    #print(list_of_tags)
+    page_meta=PageMeta(next_cursor=next_cursor, max_cursor=max_cursor, result_count=all_tags_count)
+    return TagResponse(tags=list_of_tags, page_meta=page_meta)
 
 @strawberry.type
 class Query:

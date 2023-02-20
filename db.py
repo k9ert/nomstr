@@ -5,10 +5,12 @@ from typing import List
 import json
 from flask_sqlalchemy import SQLAlchemy
 from flask import current_app as app
+from sqlalchemy.ext.hybrid import hybrid_method
 
 bookmark_tags = app.db.Table('bookmark_tags',
     app.db.Column('bookmark_id', Integer, ForeignKey('bookmark.id'), primary_key=True),
-    app.db.Column('tag_id', Integer, ForeignKey('tag.id'), primary_key=True)
+    app.db.Column('tag_id', Integer, ForeignKey('tag.id'), primary_key=True),
+    app.db.Index('bookmark_tags_idx', 'bookmark_id', 'tag_id')
 )
 
 class Tag(app.db.Model):
@@ -17,6 +19,9 @@ class Tag(app.db.Model):
     name = Column(String)
     bookmark_id = Column(Integer, ForeignKey("bookmark.id"))
     bookmarks = relationship("Bookmark", secondary=bookmark_tags, uselist=True, back_populates="tags")
+    @hybrid_method
+    def has_min_number_bookmarks(self, min):
+        return len(self.bookmarks) >= min
 
 class Bookmark(app.db.Model):
     __tablename__ = 'bookmark'

@@ -113,12 +113,42 @@ const ResultsPerPageDropdown = ({resultsPerPage, handleResultsPerPageChange}) =>
 };
 
 
+const Slider = ({ value, min, max, step, onChange }) => {
+  const [sliderValue, setSliderValue] = useState(value);
 
-const Pagination = ({ currentPage, totalPages, pageSize, onPageChange }) => {
+  const handleChange = (event) => {
+    const newValue = Number(event.target.value);
+    setSliderValue(newValue);
+  };
+
+  const handleMouseUp = () => {
+    onChange(sliderValue);
+  };
+
+  return (
+    <div className="flex items-center">
+      <input
+        type="range"
+        min={min}
+        max={max}
+        step={step}
+        value={sliderValue}
+        onChange={handleChange}
+        onMouseUp={handleMouseUp}
+        className="slider"
+      />
+      <span className="ml-3 text-gray-700">{sliderValue}</span>
+    </div>
+  );
+};
+
+
+const Pagination = ({ currentPage, totalPages, pageSize, slider, sliderValueProps, onPageChange , onSliderChange}) => {
   const [resultsPerPage, setResultsPerPage] = useState(pageSize);
+  const [sliderValue, setSliderValue] = useState(sliderValueProps)
 
   const handleClick = (page) => {
-    console.log(typeof( page ))
+    console.log("new page: " +page )
     onPageChange(page, resultsPerPage);
   };
 
@@ -126,6 +156,12 @@ const Pagination = ({ currentPage, totalPages, pageSize, onPageChange }) => {
     setResultsPerPage(Number(event.target.value));
     onPageChange(0, Number(event.target.value)); // Reset the current page to 0 when changing the results per page
   };
+
+  const handleSliderChange = (value) => {
+    
+    setSliderValue(value)
+    onSliderChange(value)
+  }
 
   return (
     <div className="flex justify-center my-4">
@@ -142,6 +178,11 @@ const Pagination = ({ currentPage, totalPages, pageSize, onPageChange }) => {
           </label>
           <ResultsPerPageDropdown resultsPerPage={resultsPerPage} handleResultsPerPageChange={handleResultsPerPageChange}/>
         </div>
+              
+        { slider ? (
+          <Slider min={0} max={400} value={sliderValue} onChange={handleSliderChange}></Slider>
+        ):<></> }
+        
       </nav>
     </div>
   );
