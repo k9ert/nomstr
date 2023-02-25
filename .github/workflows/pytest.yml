@@ -1,4 +1,11 @@
-- name: Python Pylin GitHub Action
-  uses: fylein/python-pytest-github-action@v1
-  with:
-    args: pip3 install -r requirements.txt && pytest test/unit
+name: pytest
+
+on: [push,pull_request]
+
+jobs:
+  pytest:
+    name: pytest
+    steps:
+    - uses: fylein/python-pytest-github-action@v1
+      with:
+        args: pip3 install -r requirements.txt && pytest test/unit
