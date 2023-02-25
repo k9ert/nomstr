@@ -28,7 +28,7 @@ def app_for_db():
 
         print("----------------------" + os.getcwd())
         if not Bookmark.query.all():
-            with open("nomstr/tests/data.json", "r") as f:
+            with open("tests/data.json", "r") as f:
                 data = json.load(f)
             fill_database(app.db.session, data)
     return app
