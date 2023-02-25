@@ -24,7 +24,7 @@ dynamic = ["dependencies", "version"]
 write_to = "nomstr/_version.py"
 
 [tool.setuptools.dynamic]
-dependencies = {file = ["requirements.in"]}
+dependencies = {file = ["requirements.txt"]}
 
 test = [
     "black<=23.0.0",
