@@ -4,6 +4,7 @@ on: [push,pull_request]
 
 jobs:
   pytest:
+    runs-on: ubuntu-latest
     name: pytest
     steps:
     - uses: fylein/python-pytest-github-action@v1
