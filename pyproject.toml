@@ -26,6 +26,7 @@ write_to = "nomstr/_version.py"
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
 
+[project.optional-dependencies]
 test = [
     "black<=23.0.0",
     "pre-commit==2.19.0",
