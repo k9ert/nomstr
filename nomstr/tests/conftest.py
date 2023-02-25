@@ -17,7 +17,7 @@ def app_for_db():
 
     app = Flask(__name__)
 
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///nomstr/tests/test.db"
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test.db"
     app.db = SQLAlchemy()
 
     with app.app_context():
@@ -27,7 +27,7 @@ def app_for_db():
         app.db.create_all()
 
         if not Bookmark.query.all():
-            with open("data.json", "r") as f:
+            with open("nomstr/tests/data.json", "r") as f:
                 data = json.load(f)
             fill_database(app.db.session, data)
     return app
