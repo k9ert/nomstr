@@ -26,3 +26,17 @@ def tags_by_min_count(min_count: int, query=None):
         tag_count_subquery.c.bookmark_count > min_count
     )
     return query
+
+
+def tags_after(after, limit, query=None):
+    if query == None:
+        query = app.db.session.query(Tag)
+    # Before
+    query_before = query.filter(Tag.id <= after)
+    query_before_count = query.filter(Tag.id <= after).count()
+
+    query_after = query.filter(Tag.id > after).order_by(Tag.id.asc())
+    query_after_rslt = query_after.limit(limit + 1).all()
+
+    next_cursor = 0
+    before_cursor = 0

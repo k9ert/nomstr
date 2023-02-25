@@ -20,10 +20,10 @@ def app_for_db():
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test.db"
     app.db = SQLAlchemy()
     app.app_context().push()
-    app.db.init_app(app)
-
-    app.db.create_all()
     from ..db.definitions import Bookmark, fill_database
+
+    app.db.init_app(app)
+    app.db.create_all()
 
     if not Bookmark.query.all():
         with open("data.json", "r") as f:
