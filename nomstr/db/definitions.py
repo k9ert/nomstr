@@ -13,16 +13,6 @@ bookmark_tags = app.db.Table('bookmark_tags',
     app.db.Index('bookmark_tags_idx', 'bookmark_id', 'tag_id')
 )
 
-class Tag(app.db.Model):
-    __tablename__ = 'tag'
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-    bookmark_id = Column(Integer, ForeignKey("bookmark.id"))
-    bookmarks = relationship("Bookmark", secondary=bookmark_tags, uselist=True, back_populates="tags")
-    @hybrid_method
-    def has_min_number_bookmarks(self, min):
-        return len(self.bookmarks) >= min
-
 class Bookmark(app.db.Model):
     __tablename__ = 'bookmark'
     id = Column(Integer, primary_key=True)
@@ -38,6 +28,15 @@ class Bookmark(app.db.Model):
     title = Column(String)
     tags = relationship("Tag", secondary=bookmark_tags, uselist=True, back_populates="bookmarks")
 
+class Tag(app.db.Model):
+    __tablename__ = 'tag'
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    bookmark_id = Column(Integer, ForeignKey("bookmark.id"))
+    bookmarks = relationship("Bookmark", secondary=bookmark_tags, uselist=True, back_populates="tags")
+    @hybrid_method
+    def has_min_number_bookmarks(self, min):
+        return len(self.bookmarks) >= min
 
 def fill_database(session, data):
     for bookmark_data in data:

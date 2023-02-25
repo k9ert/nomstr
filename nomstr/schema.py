@@ -5,9 +5,10 @@ from typing import List, Optional
 
 import strawberry
 
-from db import Bookmark as AlBookmark
-from db import Tag as AlTag
-from db import bookmark_tags
+from .db import Bookmark as AlBookmark
+from .db import Tag as AlTag
+from .db import bookmark_tags
+from .db.tag_queries import tags_by_name, tags_by_min_count
 from sqlalchemy.orm import aliased
 from sqlalchemy import func
 from sqlalchemy import desc
@@ -119,15 +120,7 @@ def get_tags(first: int = None, after: int = None, last: int = None, before: int
     all_query = app.db.session.query(AlTag)
 
     if min_count:
-        tag_count_subquery = (app.db.session
-            .query(AlTag.id, func.count(bookmark_tags.c.bookmark_id).label('bookmark_count'))
-            .join(bookmark_tags)
-            .group_by(AlTag.id)
-            .subquery())
-
-        query = query \
-            .join(tag_count_subquery, tag_count_subquery.c.id == AlTag.id) \
-            .filter(tag_count_subquery.c.bookmark_count > min_count)
+        query = tags_by_min_count(min_count, query=query)
     logger.info(f"first:{first} after:{after}")
     if after:
         query = query.filter(AlTag.id > after)

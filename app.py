@@ -19,14 +19,14 @@ app.db = SQLAlchemy()
 
 with app.app_context():
     app.db.init_app(app)
-    from db import Tag, Bookmark, fill_database
+    from nomstr.db import Tag, Bookmark, fill_database
     
     app.db.create_all()
     if not Bookmark.query.all():
         with open('data.json', 'r') as f:
             data = json.load(f)
         fill_database(app.db.session, data)
-    from schema import *
+    from nomstr.schema import *
     schema = strawberry.Schema(query=Query, mutation=Mutation)
     
 app.add_url_rule(
