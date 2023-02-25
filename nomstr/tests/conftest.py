@@ -8,7 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 logger = logging.getLogger(__name__)
 
 
-@pytest.fixture()
+@pytest.fixture(scope="session")
 def app_for_db():
 
     logging.basicConfig(encoding="utf-8", level=logging.DEBUG)
@@ -19,14 +19,15 @@ def app_for_db():
 
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test.db"
     app.db = SQLAlchemy()
-    app.app_context().push()
-    from ..db.definitions import Bookmark, fill_database
 
-    app.db.init_app(app)
-    app.db.create_all()
+    with app.app_context():
+        app.db.init_app(app)
+        from ..db.definitions import Bookmark, fill_database
 
-    if not Bookmark.query.all():
-        with open("data.json", "r") as f:
-            data = json.load(f)
-        fill_database(app.db.session, data)
+        app.db.create_all()
+
+        if not Bookmark.query.all():
+            with open("data.json", "r") as f:
+                data = json.load(f)
+            fill_database(app.db.session, data)
     return app

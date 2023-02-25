@@ -33,10 +33,12 @@ def tags_after(after, limit, query=None):
         query = app.db.session.query(Tag)
     # Before
     query_before = query.filter(Tag.id <= after)
-    query_before_count = query.filter(Tag.id <= after).count()
+    query_before_count = query.filter(Tag.id <= after).all()[-limit].id
 
     query_after = query.filter(Tag.id > after).order_by(Tag.id.asc())
     query_after_rslt = query_after.limit(limit + 1).all()
 
     next_cursor = 0
     before_cursor = 0
+
+    return {"result": query_after.all()}
