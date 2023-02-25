@@ -1,5 +1,6 @@
 import logging
 import pytest
+import json
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
@@ -9,6 +10,7 @@ logger = logging.getLogger(__name__)
 
 @pytest.fixture()
 def app_for_db():
+
     logging.basicConfig(encoding="utf-8", level=logging.DEBUG)
 
     logger = logging.getLogger(__name__)
@@ -21,4 +23,10 @@ def app_for_db():
     app.db.init_app(app)
 
     app.db.create_all()
+    from ..db.definitions import Bookmark, fill_database
+
+    if not Bookmark.query.all():
+        with open("data.json", "r") as f:
+            data = json.load(f)
+        fill_database(app.db.session, data)
     return app
