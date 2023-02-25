@@ -3,7 +3,7 @@ import pytest
 import json
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +26,7 @@ def app_for_db():
 
         app.db.create_all()
 
+        print("----------------------" + os.getcwd())
         if not Bookmark.query.all():
             with open("nomstr/tests/data.json", "r") as f:
                 data = json.load(f)
