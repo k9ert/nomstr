@@ -5,10 +5,10 @@
     return (
       <div className='p-6 max-w-5xl mx-auto bg-gray-300 rounded-xl shadow-md block items-center mt-2' >
         <div className="text-xl font-medium text-black">{props.title}</div>
-          <p className="text-slate-500">{props.message}</p>
-          <div>
-            {props.children}
-          </div>
+        <p className="text-slate-500">{props.message}</p>
+        <div>
+          {props.children}
+        </div>
       </div>
       
     )

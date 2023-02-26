@@ -5,9 +5,10 @@ import { useState } from 'react';
 import { Link } from "react-router-dom";
 import { GET_BOOKMARKS } from '../queries';
 import { UPDATE_BOOKMARK_MUTATION } from '../queries';
+import moment from 'moment';
 
 
-
+console.log(moment) 
 const BookmarkCard = (props) => {
 
     const [updateBookmark, { data, loading, error }] = useMutation(
@@ -63,11 +64,14 @@ const BookmarkCard = (props) => {
 
     return (
       <Card title={bookmark.title} className="py-7">
+        <div className='text-xs'>
+          created {moment(bookmark.createdAt).fromNow()}, updated {moment(bookmark.updatedAt).fromNow()}
+        </div>
         <div className=''>
           <div className=''>
-            <Link target={'_blank'} to={bookmark.url}>{bookmark.url}</Link>
+            <Link className= 'text-blue-600' target={'_blank'} to={bookmark.url}>{bookmark.url}</Link>
           </div>
-          <div className=''>
+          <div className='bg-zinc-400 rounded-2xl'>
             {bookmark.desc}
           </div>
           <div className='flex justify-center'>
@@ -93,9 +97,6 @@ const BookmarkCard = (props) => {
             <span className="text-gray-100">+</span>
             </button>
           </div>        
-          <div className='text-xs'>
-            {bookmark.created_at}
-          </div>
         </div>
       </Card>
     )

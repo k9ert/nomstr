@@ -1,11 +1,14 @@
-from sqlalchemy import create_engine, Column, Integer, String, Float, ForeignKey
-from sqlalchemy.orm import relationship, sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
-from typing import List
 import json
-from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
+from typing import List
+
 from flask import current_app as app
+from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import Column, Float, ForeignKey, Integer, String, create_engine
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.ext.hybrid import hybrid_method
+from sqlalchemy.orm import relationship, sessionmaker
+from sqlalchemy.types import Date
 
 bookmark_tags = app.db.Table(
     "bookmark_tags",
@@ -25,8 +28,8 @@ class Bookmark(app.db.Model):
     comments = Column(String)
     user = Column(String)
     shared = Column(String)
-    created_at = Column(String)
-    updated_at = Column(String)
+    created_at = Column(Date)
+    updated_at = Column(Date)
     title = Column(String)
     tags = relationship(
         "Tag", secondary=bookmark_tags, uselist=True, back_populates="bookmarks"
@@ -65,8 +68,12 @@ def fill_database(session, data):
             comments=json.dumps(bookmark_data["comments"]),
             user=bookmark_data["user"],
             shared=bookmark_data["shared"],
-            created_at=bookmark_data["created_at"],
-            updated_at=bookmark_data["updated_at"],
+            created_at=datetime.strptime(
+                bookmark_data["created_at"], "%Y/%m/%d %H:%M:%S %z"
+            ),
+            updated_at=datetime.strptime(
+                bookmark_data["updated_at"], "%Y/%m/%d %H:%M:%S %z"
+            ),
             title=bookmark_data["title"],
             tags=tags,
         )

@@ -12,6 +12,7 @@ from .db.tag_queries import tags_by_name, tags_by_min_count, tags_after
 from sqlalchemy.orm import aliased
 from sqlalchemy import func
 from sqlalchemy import desc
+from datetime import date
 
 
 logger = logging.getLogger(__name__)
@@ -34,8 +35,8 @@ class Bookmark:
     comments: List[str]
     user: str
     shared: str
-    created_at: str
-    updated_at: str
+    created_at: date
+    updated_at: date
     title: str
 
 
