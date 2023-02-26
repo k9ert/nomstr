@@ -6,7 +6,9 @@ from sqlalchemy import func
 def tags_by_name(name: str, query=None):
     if query == None:
         query = app.db.session.query(Tag)
-    return app.db.session.query(Tag).filter(Tag.name == name)
+    if name:
+        query = query.filter(Tag.name == name)
+    return query
 
 
 def tags_by_min_count(min_count: int, query=None):
@@ -31,6 +33,13 @@ def tags_by_min_count(min_count: int, query=None):
 def tags_after(after, limit, query=None):
     if query == None:
         query = app.db.session.query(Tag)
+
+    # We need:
+    # first_cursor
+    # last_cursor
+    # before_cursor + before_page
+    # after_cursor + after_page
+
     # Before
     query_before = query.filter(Tag.id <= after)
     query_before_count = query.filter(Tag.id <= after).all()[-limit].id

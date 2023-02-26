@@ -8,8 +8,11 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def test_tags_data_structure_assert():
-    pass
+def test_tags_data_structure_assert(app_for_db):
+    from ..db.tag_queries import tags_by_name
+
+    with app_for_db.app_context():
+        tags_by_name(None).count() == 5
 
 
 def test_tag_by_name(app_for_db):
@@ -27,7 +30,7 @@ def test_tag_by_min_count(app_for_db):
     logger.info("Test started")
     with app_for_db.app_context():
         query = tags_by_min_count(1)
-        assert query.count() >= 10
+        assert query.count() >= 3
 
 
 def test_tag_by_both(app_for_db):
@@ -46,4 +49,4 @@ def test_tag_after(app_for_db):
     logger.info("Test started")
     with app_for_db.app_context():
         query = tags_after(5, 5)
-        assert len(query["result"]) == 3090
+        assert len(query["result"]) == 17

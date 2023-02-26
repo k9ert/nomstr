@@ -17,7 +17,7 @@ def app_for_db():
 
     app = Flask(__name__)
 
-    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test.db"
+    app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test_test.db"
     app.db = SQLAlchemy()
 
     with app.app_context():
