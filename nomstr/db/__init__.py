@@ -8,4 +8,3 @@ from flask import current_app as app
 from sqlalchemy.ext.hybrid import hybrid_method
 
 from .definitions import Tag, Bookmark, fill_database, bookmark_tags
-
