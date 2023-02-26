@@ -29,7 +29,7 @@ def app_for_db():
         if not Bookmark.query.all():
             print("----------------------" + os.getcwd())
             print(os.listdir("."))
-            with open("tests/data.json", "r") as f:
+            with open("nomstr/tests/data.json", "r") as f:
                 data = json.load(f)
             fill_database(app.db.session, data)
     return app
