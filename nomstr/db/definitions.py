@@ -49,7 +49,7 @@ class Tag(app.db.Model):
 
 def fill_database(session, data):
     for bookmark_data in data:
-        tag_list = bookmark_data["tags"].split(",")
+        tag_list = list(set(bookmark_data["tags"].split(",")))
         tags = []
         for name in tag_list:
             tag = session.query(Tag).filter(Tag.name == name).first()

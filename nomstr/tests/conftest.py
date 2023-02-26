@@ -3,6 +3,7 @@ import pytest
 import json
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
+import pathlib
 import os
 
 logger = logging.getLogger(__name__)
@@ -16,7 +17,7 @@ def app_for_db():
     logger = logging.getLogger(__name__)
 
     app = Flask(__name__)
-
+    pathlib.Path("instance/test_test.db").unlink(missing_ok=True)
     app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///test_test.db"
     app.db = SQLAlchemy()
 
@@ -27,8 +28,6 @@ def app_for_db():
         app.db.create_all()
 
         if not Bookmark.query.all():
-            print("----------------------" + os.getcwd())
-            print(os.listdir("."))
             with open("nomstr/tests/data.json", "r") as f:
                 data = json.load(f)
             fill_database(app.db.session, data)

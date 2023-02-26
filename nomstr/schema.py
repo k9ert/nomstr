@@ -8,7 +8,7 @@ import strawberry
 from .db import Bookmark as AlBookmark
 from .db import Tag as AlTag
 from .db import bookmark_tags
-from .db.tag_queries import tags_by_name, tags_by_min_count
+from .db.tag_queries import tags_by_name, tags_by_min_count, tags_after
 from sqlalchemy.orm import aliased
 from sqlalchemy import func
 from sqlalchemy import desc
@@ -133,25 +133,17 @@ def get_tags(
 
     if min_count:
         query = tags_by_min_count(min_count, query=query)
-    logger.info(f"first:{first} after:{after}")
-    if after:
-        query = query.filter(AlTag.id > after)
-        query = query.order_by(AlTag.id.asc())
-    if first:
-        query = query.limit(first)
-    tags = query.all()
-    next_cursor = 0
-    if first and after:
-        next_cursor = tags[-1].id + 1
-    all_tags_count = all_query.count()
-    max_cursor = all_query.order_by(desc(AlTag.id)).first().id
+
+    qrslt = tags_after(after, first, query)
     list_of_tags = []
     tag: AlTag
-    for tag in tags:
+    for tag in qrslt["result"]:
         list_of_tags.append(Tag(id=tag.id, name=tag.name, count=len(tag.bookmarks)))
     # print(list_of_tags)
     page_meta = PageMeta(
-        next_cursor=next_cursor, max_cursor=max_cursor, result_count=all_tags_count
+        next_cursor=qrslt["next_cursor"],
+        max_cursor=qrslt["last_cursor"],
+        result_count=qrslt["result_count"],
     )
     return TagResponse(tags=list_of_tags, page_meta=page_meta)
 

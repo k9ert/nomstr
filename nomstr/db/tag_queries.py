@@ -1,4 +1,5 @@
 from flask import current_app as app
+import math
 from .definitions import Tag, Bookmark, bookmark_tags
 from sqlalchemy import func
 
@@ -30,24 +31,78 @@ def tags_by_min_count(min_count: int, query=None):
     return query
 
 
+def _first_cursor(query, limit) -> Tag:
+    return query.order_by(Tag.id.asc()).limit(limit).first().id
+
+
+def _last_cursor(query, limit) -> Tag:
+    return query.order_by(Tag.id.desc()).limit(limit).all()[-1].id
+
+
+def _before_cursor(query, after, limit) -> Tag:
+    query_result = (
+        query.filter(Tag.id < after).order_by(Tag.id.desc()).limit(limit).all()
+    )
+    if query_result != []:
+        return query_result[-1].id  # last element
+    else:
+        return 1
+
+
+def _next_cursor(query, after, limit) -> Tag:
+    return (
+        query.filter(Tag.id >= after)
+        .order_by(Tag.id.asc())
+        .limit(limit + 1)
+        .all()[-1]
+        .id
+    )
+
+
 def tags_after(after, limit, query=None):
     if query == None:
         query = app.db.session.query(Tag)
+    if after == None:
+        after = 1
 
-    # We need:
+    query_count = query.count()
+    if limit == None:
+        limit = query_count
+
     # first_cursor
+    first_cursor = _first_cursor(query, limit)
+    first_page = 0
+
     # last_cursor
-    # before_cursor + before_page
-    # after_cursor + after_page
+    last_cursor = _last_cursor(query, limit)
+    last_page = int(query_count / limit)
 
-    # Before
-    query_before = query.filter(Tag.id <= after)
-    query_before_count = query.filter(Tag.id <= after).all()[-limit].id
+    # before_cursor
+    before_cursor = _before_cursor(query, after, limit)
+    before_page = int(query.filter(Tag.id <= after).count() / limit)
 
-    query_after = query.filter(Tag.id > after).order_by(Tag.id.asc())
-    query_after_rslt = query_after.limit(limit + 1).all()
+    # after_cursor
+    after_cursor = after
+    after_page = before_page + 1
 
-    next_cursor = 0
-    before_cursor = 0
+    # next_cursor
+    next_cursor = _next_cursor(query, after, limit)
+    next_page = after_page + +1
 
-    return {"result": query_after.all()}
+    return {
+        "result": query.filter(Tag.id >= after)
+        .order_by(Tag.id.asc())
+        .limit(limit)
+        .all(),
+        "result_count": query_count,
+        "first_cursor": first_cursor,
+        "first_page": 0,
+        "last_cursor": last_cursor,
+        "last_page": last_page,
+        "before_cursor": before_cursor,
+        "before_page": before_page,
+        "after_cursor": after_cursor,
+        "after_page": after_page,
+        "next_cursor": next_cursor,
+        "next_page": next_page,
+    }
