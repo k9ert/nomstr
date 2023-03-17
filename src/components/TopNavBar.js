@@ -22,6 +22,7 @@ const TopNavBarItem = (props) => {
         </div>
         <TopNavBarItem title="Home" href="/"/>
         <TopNavBarItem title="TagCloud" href="/tags"/>
+        <TopNavBarItem title="Nostr" href="/nostr"/>
         <TopNavBarItem title="About" href="/about"/>
 
     </nav>
